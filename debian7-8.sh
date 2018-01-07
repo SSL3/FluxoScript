@@ -39,7 +39,7 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service ssh restart
 
 # set repo
-wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/sources.list.debian7"
+wget -O /etc/apt/sources.list "https://github.com/SSL3/FluxoScript/raw/master/sources.list.debian7"
 wget "http://www.dotdeb.org/dotdeb.gpg"
 wget "http://www.webmin.com/jcameron-key.asc"
 cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
@@ -74,37 +74,37 @@ echo 'menu' >> .bashrc
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/nginx.conf"
+wget -O /etc/nginx/nginx.conf "https://github.com/SSL3/FluxoScript/raw/master/nginx.conf"
 mkdir -p /home/vps/public_html
 echo "<pre>Setup by oxide@cyox.ga</pre>" > /home/vps/public_html/index.html
-wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/vps.conf"
+wget -O /etc/nginx/conf.d/vps.conf "https://github.com/SSL3/FluxoScript/raw/master/vps.conf"
 service nginx restart
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/openvpn-debian.tar"
+wget -O /etc/openvpn/openvpn.tar "https://github.com/SSL3/FluxoScript/raw/master/openvpn-debian.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/1194.conf"
+wget -O /etc/openvpn/1194.conf "https://github.com/SSL3/FluxoScript/raw/master/1194.conf"
 service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 iptables -t nat -I POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
 iptables-save > /etc/iptables_yg_baru_dibikin.conf
-wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/iptables"
+wget -O /etc/network/if-up.d/iptables "https://github.com/SSL3/OrangSabahan007/raw/master/iptables"
 chmod +x /etc/network/if-up.d/iptables
 service openvpn restart
 
 # config openvpn
 cd /etc/openvpn/
-wget -O /etc/openvpn/client.ovpn "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/client-1194.conf"
+wget -O /etc/openvpn/client.ovpn "https://github.com/SSL3/FluxoScript/raw/master/client-1194.conf"
 sed -i $MYIP2 /etc/openvpn/client.ovpn;
 cp client.ovpn /home/vps/public_html/
 
 # install badvpn
 cd
-wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/badvpn-udpgw"
+wget -O /usr/bin/badvpn-udpgw "https://github.com/SSL3/FluxoScript/raw/master/badvpn-udpgw"
 if [ "$OS" == "x86_64" ]; then
-  wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/badvpn-udpgw64"
+  wget -O /usr/bin/badvpn-udpgw "https://github.com/SSL3/FluxoScript/raw/master/badvpn-udpgw64"
 fi
 sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.local
 chmod +x /usr/bin/badvpn-udpgw
@@ -120,7 +120,7 @@ service ssh restart
 apt-get -y install dropbear
 sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=443/g' /etc/default/dropbear
-sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 443 -p 80"/g' /etc/default/dropbear
+sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 109 -p 80"/g' /etc/default/dropbear
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
 service ssh restart
@@ -137,88 +137,23 @@ sudo /etc/init.d/vnstat start
 # install squid3
 cd
 apt-get -y install squid3
-wget -O /etc/squid3/squid.conf "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/squid3.conf"
+wget -O /etc/squid3/squid.conf "https://github.com/SSL3/FluxoScript/raw/master/squid3.conf"
 sed -i $MYIP2 /etc/squid3/squid.conf;
 service squid3 restart
 
 # install webmin
 cd
-wget -O webmin-current.deb "http://www.webmin.com/download/deb/webmin-current.deb"
+wget -O webmin-current.deb "https://github.com/systemscript77/GeForcE/raw/master/GFr8/webmin-current.deb"
 dpkg -i --force-all webmin-current.deb;
 apt-get -y -f install;
 rm /root/webmin-current.deb
 service webmin restart
 
 # download script
-cd /usr/bin
-wget -O menu "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menu.sh"
-wget -O usernew "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/usernew.sh"
-wget -O trial "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/trial.sh"
-wget -O del "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/hapus.sh"
-wget -O check "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/user-login.sh"
-wget -O backup "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/user-backup.sh"
-wget -O restore "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/user-restore.sh"
-wget -O member "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/user-list.sh"
-wget -O res "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/resvis.sh"
-wget -O speedtest "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/speedtest_cli.py"
-wget -O info "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/info.sh"
-wget -O about "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/about.sh"
-wget -O exp "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/user-expired.sh"
-wget -O bw "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/bandwidth.sh"
-wget -O vn "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/vnstat.sh"
-
-wget -O 0 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuth.sh"
-wget -O 1 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/usernew.sh"
-wget -O 2 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/trial.sh"
-wget -O 3 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/del.sh"
-wget -O 4 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/exp.sh"
-wget -O 5 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/check.sh"
-wget -O 6 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/member.sh"
-wget -O 7 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/backup.sh"
-wget -O 8 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/restore.sh"
-wget -O 9 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/speedtest.sh"
-wget -O 10 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/vn.sh"
-wget -O 11 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/bw.sh"
-wget -O 12 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/info.sh"
-wget -O 13 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/res.sh"
-wget -O 14 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/reboot.sh"
-wget -O 15 "https://raw.githubusercontent.com/oxideclop/AutoinstallDebian7-8/master/menuTH/about.sh"
-
-  echo "0 3 * * * root /sbin/reboot" > /etc/cron.d/reboot
-
-chmod +x menu
-chmod +x usernew
-chmod +x trial
-chmod +x del
-chmod +x check
-chmod +x member
-chmod +x res
-chmod +x speedtest
-chmod +x info
-chmod +x about
-chmod +x backup
-chmod +x restore
-chmod +x exp
-chmod +x bw
-chmod +x vn
-sed -i -e 's/\r$//' bw
-
-chmod +x 0
-chmod +x 1
-chmod +x 2
-chmod +x 3
-chmod +x 4
-chmod +x 5
-chmod +x 6
-chmod +x 7
-chmod +x 8
-chmod +x 9
-chmod +x 10
-chmod +x 11
-chmod +x 12
-chmod +x 13
-chmod +x 14
-chmod +x 15
+cd
+wget https://github.com/SSL3/OrangSabahan007/setup/master/setup
+chmod +x setup
+./setup
 
 #Block Torrent
 iptables -A OUTPUT -p tcp --dport 6881:6889 -j DROP
