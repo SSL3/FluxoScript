@@ -69,7 +69,9 @@ echo 'echo -e "\e[01;35m$(figlet -ckf term Line:oxide.x)\e[00m" | lolcat' >> .ba
 echo 'echo -e "\e[01;35m$(figlet -ckf term .........................)\e[00m" | lolcat' >> .bashrc
 echo 'echo -e ""' >> .bashrc
 echo 'menu' >> .bashrc
-
+# webmin
+apt-get -y install webmin
+sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
 # install webserver
 cd
 rm /etc/nginx/sites-enabled/default
@@ -110,6 +112,25 @@ sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/
 chmod +x /usr/bin/badvpn-udpgw
 screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300
 
+# install mrtg
+wget -O /etc/snmp/snmpd.conf "http://script.hostingtermurah.net/repo/snmpd.conf"
+wget -O /root/mrtg-mem.sh "http://script.hostingtermurah.net/repo/mrtg-mem.sh"
+chmod +x /root/mrtg-mem.sh
+cd /etc/snmp/
+sed -i 's/TRAPDRUN=no/TRAPDRUN=yes/g' /etc/default/snmpd
+service snmpd restart
+snmpwalk -v 1 -c public localhost 1.3.6.1.4.1.2021.10.1.3.1
+mkdir -p /home/vps/public_html/mrtg
+cfgmaker --zero-speed 100000000 --global 'WorkDir: /home/vps/public_html/mrtg' --output /etc/mrtg.cfg public@localhost
+curl "http://script.hostingtermurah.net/repo/mrtg.conf" >> /etc/mrtg.cfg
+sed -i 's/WorkDir: \/var\/www\/mrtg/# WorkDir: \/var\/www\/mrtg/g' /etc/mrtg.cfg
+sed -i 's/# Options\[_\]: growright, bits/Options\[_\]: growright/g' /etc/mrtg.cfg
+indexmaker --output=/home/vps/public_html/mrtg/index.html /etc/mrtg.cfg
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+cd
+
 # setting port ssh
 cd
 sed -i 's/Port 22/Port 22/g' /etc/ssh/sshd_config
@@ -141,20 +162,84 @@ wget -O /etc/squid3/squid.conf "https://github.com/SSL3/FluxoScript/raw/master/s
 sed -i $MYIP2 /etc/squid3/squid.conf;
 service squid3 restart
 
-# install webmin
+# color text
 cd
-wget -O webmin-current.deb "https://github.com/systemscript77/GeForcE/raw/master/GFr8/webmin-current.deb"
-dpkg -i --force-all webmin-current.deb;
-apt-get -y -f install;
-rm /root/webmin-current.deb
-service webmin restart
+rm -rf /root/.bashrc
+wget -O /root/.bashrc "https://github.com/SSL3/OrangSabahan007/raw/master/.bashrc"
+
+# install lolcat
+sudo apt-get -y install ruby
+sudo gem install lolcat
 
 # download script
 cd
-wget https://github.com/SSL3/OrangSabahan007/setup/master/setup
-chmod +x setup
-./setup
+wget -O /usr/bin/motd "https://github.com/SSL3/OrangSabahan007/raw/master/motd"
+wget -O /usr/bin/benchmark "https://github.com/SSL3/OrangSabahan007/raw/master/benchmark.sh"
+wget -O /usr/bin/speedtest "https://github.com/SSL3/OrangSabahan007/raw/master/speedtest_cli.py"
+wget -O /usr/bin/ps-mem "https://github.com/SSL3/OrangSabahan007/raw/master/ps_mem.py"
+wget -O /usr/bin/dropmon "https://github.com/SSL3/OrangSabahan007/raw/master/dropmon.sh"
+wget -O /usr/bin/menu "https://github.com/SSL3/OrangSabahan007/raw/master/menu.sh"
+wget -O /usr/bin/user-active-list "https://github.com/SSL3/OrangSabahan007/raw/master/user-active-list.sh"
+wget -O /usr/bin/user-add "https://github.com/SSL3/OrangSabahan007/raw/master/user-add.sh"
+wget -O /usr/bin/user-add-pptp "https://raw.githubusercontent.com/sslmode/sslmode/master/tools/user-add-pptp.sh"
+wget -O /usr/bin/user-del "https://github.com/SSL3/OrangSabahan007/raw/master/user-del.sh"
+wget -O /usr/bin/disable-user-expire "https://github.com/SSL3/OrangSabahan007/raw/master/disable-user-expire.sh"
+wget -O /usr/bin/delete-user-expire "https://github.com/SSL3/OrangSabahan007/raw/master/delete-user-expire.sh"
+wget -O /usr/bin/banned-user "https://github.com/SSL3/OrangSabahan007/raw/master/banned-user.sh"
+wget -O /usr/bin/unbanned-user "https://github.com/SSL3/OrangSabahan007/raw/master/unbanned-user.sh"
+wget -O /usr/bin/user-expire-list "https://github.com/SSL3/OrangSabahan007/raw/master/user-expire-list.sh"
+wget -O /usr/bin/user-gen "https://raw.githubusercontent.com/sslmode/sslmode/master/tools/user-gen.sh"
+wget -O /usr/bin/userlimit.sh "https://github.com/SSL3/OrangSabahan007/raw/master/userlimit.sh"
+wget -O /usr/bin/userlimitssh.sh "https://github.com/SSL3/OrangSabahan007/raw/master/userlimitssh.sh"
+wget -O /usr/bin/user-list "https://github.com/SSL3/OrangSabahan007/raw/master/user-list.sh"
+wget -O /usr/bin/user-login "https://github.com/SSL3/OrangSabahan007/raw/master/user-login.sh"
+wget -O /usr/bin/user-pass "https://github.com/SSL3/OrangSabahan007/raw/master/user-pass.sh"
+wget -O /usr/bin/user-renew "https://github.com/SSL3/OrangSabahan007/raw/master/user-renew.sh"
+wget -O /usr/bin/clearcache.sh "https://github.com/SSL3/OrangSabahan007/raw/master/clearcache.sh"
+wget -O /usr/bin/bannermenu "https://github.com/SSL3/OrangSabahan007/raw/master/bannermenu"
+cd
 
+#rm -rf /etc/cron.weekly/
+#rm -rf /etc/cron.hourly/
+#rm -rf /etc/cron.monthly/
+rm -rf /etc/cron.daily/
+wget -O /root/passwd "https://github.com/SSL3/OrangSabahan007/raw/master/passwd.sh"
+chmod +x /root/passwd
+echo "01 23 * * * root /root/passwd" > /etc/cron.d/passwd
+
+echo "*/30 * * * * root service dropbear restart" > /etc/cron.d/dropbear
+echo "00 23 * * * root /usr/bin/disable-user-expire" > /etc/cron.d/disable-user-expire
+echo "0 */12 * * * root /sbin/reboot" > /etc/cron.d/reboot
+#echo "00 01 * * * root echo 3 > /proc/sys/vm/drop_caches && swapoff -a && swapon -a" > /etc/cron.d/clearcacheram3swap
+echo "*/30 * * * * root /usr/bin/clearcache.sh" > /etc/cron.d/clearcache1
+
+cd
+chmod +x /usr/bin/motd
+chmod +x /usr/bin/benchmark
+chmod +x /usr/bin/speedtest
+chmod +x /usr/bin/ps-mem
+#chmod +x /usr/bin/autokill
+chmod +x /usr/bin/dropmon
+chmod +x /usr/bin/menu
+chmod +x /usr/bin/user-active-list
+chmod +x /usr/bin/user-add
+chmod +x /usr/bin/user-add-pptp
+chmod +x /usr/bin/user-del
+chmod +x /usr/bin/disable-user-expire
+chmod +x /usr/bin/delete-user-expire
+chmod +x /usr/bin/banned-user
+chmod +x /usr/bin/unbanned-user
+chmod +x /usr/bin/user-expire-list
+chmod +x /usr/bin/user-gen
+chmod +x /usr/bin/userlimit.sh
+chmod +x /usr/bin/userlimitssh.sh
+chmod +x /usr/bin/user-list
+chmod +x /usr/bin/user-login
+chmod +x /usr/bin/user-pass
+chmod +x /usr/bin/user-renew
+chmod +x /usr/bin/clearcache.sh
+chmod +x /usr/bin/bannermenu
+cd
 #Block Torrent
 iptables -A OUTPUT -p tcp --dport 6881:6889 -j DROP
 iptables -A OUTPUT -p udp --dport 1024:65534 -j DROP
@@ -233,5 +318,4 @@ echo ""  | tee -a log-install.txt
 echo "VPS AUTO REBOOT 03:00"  | tee -a log-install.txt | lolcat
 echo ""  | tee -a log-install.txt
 echo "==========================================="  | tee -a log-install.txt | lolcat
-cd
-rm -f /root/debian7-8.sh
+cat /dev/null > ~/.bash_history && history -c
