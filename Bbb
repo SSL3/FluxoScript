@@ -1,0 +1,155 @@
+#!/bin/bash
+myip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
+myint=`ifconfig | grep -B1 "inet addr:$myip" | head -n1 | awk '{print $1}'`;
+
+flag=0
+
+
+echo
+
+
+if [ $USER != 'root' ]; then
+	echo "Sorry, for run the script please using root user"
+	exit
+	
+fi
+	# initialisasi var
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+MYIP=$(wget -qO- ipv4.icanhazip.com);
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+ether=`ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:`
+if [[ $ether = "" ]]; then
+        ether=eth0
+
+fi
+
+# go to root
+cd
+
+echo ""
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;82m     *                 #!/bin/bash
+myip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
+myint=`ifconfig | grep -B1 "inet addr:$myip" | head -n1 | awk '{print $1}'`;
+
+flag=0
+
+
+echo
+
+
+if [ $USER != 'root' ]; then
+	echo "Sorry, for run the script please using root user"
+	exit
+	
+fi
+	# initialisasi var
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+MYIP=$(wget -qO- ipv4.icanhazip.com);
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+ether=`ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:`
+if [[ $ether = "" ]]; then
+        ether=eth0
+
+fi
+
+# go to root
+cd
+
+echo ""
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;82m     *                 AUTOSCRIPT VPS 2018                   *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;6m     *                     Contact Me                        *"
+echo -e "\e[38;5;6m     *                Channel: CuCuAtoK_TeaM                 *"
+echo -e "\e[38;5;6m     *                Whatsapp: -                            *"
+echo -e "\e[38;5;196m     *                Telegram: @Cucu_atok                   *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;226m     *                AUTOSCRIPT VPS 2018                    *"
+echo -e "\e[38;5;6m     ========================================================="
+# check registered ip
+wget -q -O IP "https://raw.githubusercontent.com/cucuatok93/cucuatok/master/IP.txt"
+if ! grep -w -q $MYIP IP; then
+	echo -e "\e[38;5;196m Maaf Bro Hanya IP terdaftar sahaja yang boleh menggunakan Autoscript ini!!!" 
+	if [[ $vps = "zvur" ]]; then
+		echo -e "\e[38;5;226m PM Telagram: https://t.me/Cucu_atok untuk dapatkan harga diskaun kaw²\e[0m"
+	else
+		echo -e "\e[38;5;226m PM Telegram: https://t.me/Cucu_atok untuk dapatkan harga diskaun kaw²\e[0m"
+	fi
+	rm -f /root/IP
+	exit
+fi                     *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;6m     *                     Contact Me                        *"
+echo -e "\e[38;5;6m     *       Cpanel Percuma Sekali Bayar Free 1 Domain         *"
+echo -e "\e[38;5;6m     *                Whatsapp: -                            *"
+echo -e "\e[38;5;196m     *                Telegram: @orangkuatsabahanterkini    *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;226m     *                AUTOSCRIPT VPS 2018                    *"
+echo -e "\e[38;5;6m     ========================================================="
+# check registered ip
+wget -q -O IP "https://raw.githubusercontent.com/cucuatok93/cucuatok/master/IP.txt"
+if ! grep -w -q $MYIP IP; then
+	echo -e "\e[38;5;196m Maaf Bro Hanya IP terdaftar sahaja yang boleh menggunakan Autoscript ini!!!" 
+	if [[ $vps = "zvur" ]]; then
+		echo -e "\e[38;5;226m PM Telagram: https://t.me/Cucu_atok untuk dapatkan harga diskaun kaw²\e[0m"
+	else
+		echo -e "\e[38;5;226m PM Telegram: https://t.me/Cucu_atok untuk dapatkan harga diskaun kaw²\e[0m"
+	fi
+	rm -f /root/IP
+	exit
+fi
+cd#!/bin/bash
+myip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
+myint=`ifconfig | grep -B1 "inet addr:$myip" | head -n1 | awk '{print $1}'`;
+
+flag=0
+
+
+echo
+
+
+if [ $USER != 'root' ]; then
+	echo "Sorry, for run the script please using root user"
+	exit
+	
+fi
+	# initialisasi var
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+MYIP=$(wget -qO- ipv4.icanhazip.com);
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+ether=`ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:`
+if [[ $ether = "" ]]; then
+        ether=eth0
+
+fi
+
+# go to root
+cd
+
+echo ""
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;82m     *                 CPANEL 2018                          *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;6m     *                   Contact Me                          *"
+echo -e "\e[38;5;6m     *        DOMAIN RM 60 / FREE CPANEL (LIFE TIME          *"
+echo -e "\e[38;5;6m     *                  Whatsapp: -60109475453               *"
+echo -e "\e[38;5;196m   *       Telegram: @orangkuatsabahanterkini              *"
+echo -e "\e[38;5;6m     ========================================================="
+echo -e "\e[38;5;226m     *                CPANEL 2018                       *"
+echo -e "\e[38;5;6m     ========================================================="
+# check registered ip
+wget -q -O IP "https://raw.githubusercontent.com/orangkuatsabahanterkini/master/IP.txt"
+if ! grep -w -q $MYIP IP; then
+	echo -e "\e[38;5;196m Maaf Bro Hanya IP terdaftar sahaja yang boleh menggunakan Autoscript ini!!!" 
+	if [[ $vps = "zvur" ]]; then
+		echo -e "\e[38;5;226m PM Telagram: https://t.me/orangkuatsabahanterkini untuk dapatkan harga diskaun kaw²\e[0m"
+	else
+		echo -e "\e[38;5;226m PM Telegram: https://t.me/orangkuatsabahanterkini untuk dapatkan harga diskaun kaw²\e[0m"
+	fi
+	rm -f /root/IP
+	exit
+fi
