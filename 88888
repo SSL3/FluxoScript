@@ -1,0 +1,869 @@
+#!/bin/bash
+clear
+echo -e "\e[40;38;5;196m " 
+echo "======================================="
+echo " WELCOME TO AUTOSCRIPT BORNEOBESTHOSTING"
+echo "========================================"
+echo "CLICK 'I' SETUP VPS Non-Local"
+echo "CLICK 'L' SETUP VPS Local" 
+echo "========================================"
+read -p "Location : " -e loc
+apt-get update
+
+if [[ $USER != "root" ]]; then
+	echo "Maaf, Anda harus menjalankan ini sebagai root"
+	exit
+fi
+
+# initialisasi var
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+#MYIP=$(wget -qO- ipv4.icanhazip.com);
+
+# get the VPS IP
+#ip=`ifconfig venet0:0 | grep 'inet addr' | awk {'print $2'} | sed s/.*://`
+
+#MYIP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
+MYIP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}' | head -1)
+if [ "$MYIP" = "" ]; then
+	MYIP=$(wget -qO- ipv4.icanhazip.com)
+fi
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+ether=`ifconfig | cut -c 1-8 | sort | uniq -u | grep venet0 | grep -v venet0:`
+if [[ $ether = "" ]]; then
+        ether=eth0
+fi
+
+#vps="zvur";
+vps="blangkon";
+
+#if [[ $vps = "zvur" ]]; then
+	#source="http://"
+#else
+	source="http://vpsproject.me/Debian7"
+#fi
+
+# go to root
+cd
+echo "=============================="
+echo "        MULA SETUP        "
+echo "=============================="
+echo -e "\e[40;38;5;101m "    
+# disable ipv6
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+#sed -i 's/net.ipv6.conf.all.disable_ipv6 = 0/net.ipv6.conf.all.disable_ipv6 = 1/g' /etc/sysctl.conf
+#sed -i 's/net.ipv6.conf.default.disable_ipv6 = 0/net.ipv6.conf.default.disable_ipv6 = 1/g' /etc/sysctl.conf
+#sed -i 's/net.ipv6.conf.lo.disable_ipv6 = 0/net.ipv6.conf.lo.disable_ipv6 = 1/g' /etc/sysctl.conf
+#sed -i 's/net.ipv6.conf.eth0.disable_ipv6 = 0/net.ipv6.conf.eth0.disable_ipv6 = 1/g' /etc/sysctl.conf
+#sysctl -p
+echo -e "\e[40;38;5;226 " 
+echo "=============================="
+echo "     INSTALL CURL     "
+echo "=============================="
+# install wget and curl
+apt-get update;apt-get -y install wget curl;
+apt-get install gem
+# set time GMT +7
+ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+# set locale
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+service ssh restart
+# remove unused
+apt-get -y --purge remove samba*;
+apt-get -y --purge remove apache2*;
+apt-get -y --purge remove sendmail*;
+apt-get -y --purge remove bind9*;
+apt-get -y --purge remove dropbear*;
+#apt-get -y autoremove;
+echo -e "\e[40;38;5;101m " 
+echo "=============================="
+echo "       REPO "
+echo "=============================="
+# set repo
+ver=`cat /etc/debian_version`
+if [ $ver = '6.0' ]
+then
+debver='6'
+elif [ $ver = '6.1' ]
+then
+debver='6'
+elif [ $ver = '6.2' ]
+then
+debver='6'
+elif [ $ver = '6.3' ]
+then
+debver='6'
+elif [ $ver = '6.4' ]
+then
+debver='6'
+elif [ $ver = '6.5' ]
+then
+debver='6'
+elif [ $ver = '6.6' ]
+then
+debver='6'
+elif [ $ver = '6.7' ]
+then
+debver='6'
+elif [ $ver = '6.8' ]
+then
+debver='6'
+elif [ $ver = '6.9' ]
+then
+debver='6'
+elif [ $ver = '7.0' ]
+then no
+debver='7'
+elif [ $ver = '7.1' ]
+then
+debver='7'
+elif [ $ver = '7.2' ]
+then
+debver='7'
+elif [ $ver = '7.3' ]
+then
+debver='7'
+elif [ $ver = '7.4' ]
+then
+debver='7'
+elif [ $ver = '7.5' ]
+then
+debver='7'
+elif [ $ver = '7.6' ]
+then
+debver='7'
+elif [ $ver = '7.7' ]
+then
+debver='7'
+elif [ $ver = '7.8' ]
+then
+debver='7'
+elif [ $ver = '7.9' ]
+then
+debver='7'
+elif [ $ver = '8.0' ]
+then
+debver='8'
+elif [ $ver = '8.1' ]
+then
+debver='8'
+elif [ $ver = '8.2' ]
+then
+debver='8'
+elif [ $ver = '8.3' ]
+then
+debver='8'
+elif [ $ver = '8.4' ]
+then
+debver='8'
+elif [ $ver = '8.5' ]
+then
+debver='8'
+elif [ $ver = '8.6' ]
+then
+debver='8'
+elif [ $ver = '8.7' ]
+then
+debver='8'
+elif [ $ver = '8.8' ]
+then
+debver='8'
+elif [ $ver = '8.9' ]
+then
+debver='8'
+else
+debver='Null'
+fi
+if [ $debver = '6' ]; then
+	if [[ "$loc" = "I" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7
+		wget $source/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	elif [[ "$loc" = "L" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	elif [[ "$loc" = "i" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7
+		wget $source/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+    elif [[ "$loc" = "l" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	fi
+elif [ $debver = '7' ]; then
+	if [[ "$loc" = "I" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7
+		wget $source/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+    elif [[ "$loc" = "L" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	elif [[ "$loc" = "i" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian7
+		wget $source/file/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+    apt-get update
+	elif [[ "$loc" = "l" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.debian7.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+fi  	
+elif [ $debver = '8' ]; then
+	if [[ "$loc" = "I" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian8
+		wget $source/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	elif [[ "$loc" = "L" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian8.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+    apt-get update
+	elif [[ "$loc" = "i" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian8
+		wget $source/dotdeb.gpg
+		cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	elif [[ "$loc" = "l" ]]; then
+		wget -O /etc/apt/sources.list $source/sources.list.debian8.local
+		wget $source/dotdeb.gpg
+		apt-key add dotdeb.gpg
+		rm dotdeb.gpg
+		apt-get install python-software-properties 
+		apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+		cd /root
+		wget http://www.webmin.com/jcameron-key.asc
+		apt-key add jcameron-key.asc
+		cd
+		apt-get update
+	fi
+else
+	cd
+fi
+
+gpg --keyserver pgpkeys.mit.edu --recv-key  9D6D8F6BC857C906      
+gpg -a --export 9D6D8F6BC857C906 | sudo apt-key add -
+gpg --keyserver pgpkeys.mit.edu --recv-key  7638D0442B90D010      
+gpg -a --export 7638D0442B90D010 | sudo apt-key add -
+
+# update
+apt-get update;apt-get -y upgrade;
+
+# install webserver
+apt-get -y install nginx php5-fpm php5-cli
+apt-get -y install zip tar
+
+# install essential package
+echo "mrtg mrtg/conf_mods boolean true" | debconf-set-selections
+apt-get -y install bmon 
+apt-get -y install iftop 
+apt-get -y install htop 
+apt-get -y install nmap 
+apt-get -y install axel 
+apt-get -y install nano 
+apt-get -y install iptables 
+apt-get -y install traceroute 
+apt-get -y install sysv-rc-conf 
+apt-get -y install dnsutils 
+apt-get -y install bc 
+apt-get -y install nethogs
+apt-get -y install openvpn 
+apt-get -y install vnstat 
+apt-get -y install less 
+apt-get -y install screen 
+apt-get -y install psmisc 
+apt-get -y install apt-file 
+apt-get -y install whois 
+apt-get -y install ptunnel 
+apt-get -y install ngrep 
+apt-get -y install mtr 
+apt-get -y install git 
+apt-get -y install zsh 
+apt-get -y install mrtg 
+apt-get -y install snmp 
+apt-get -y install snmpd 
+apt-get -y install snmp-mibs-downloader 
+apt-get -y install unzip 
+apt-get -y install unrar 
+apt-get -y install rsyslog 
+apt-get -y install debsums 
+apt-get -y install rkhunter
+apt-get -y install build-essential
+apt-get -y --force-yes -f install libxml-parser-perl
+echo -e "\e[40;38;5;226m " 
+echo "=============================="
+echo "  UPDATE ALL SERVICE        "
+echo "=============================="
+# disable exim
+service exim4 stop
+sysv-rc-conf exim4 off
+# update apt-file
+apt-file update
+# setting vnstat
+vnstat -u -i $ether
+service vnstat restart
+#text gambar
+apt-get install boxes
+# text pelangi
+sudo apt-get install ruby
+sudo gem install lolcat
+# text warna
+cd
+rm -rf /root/.bashrc
+wget -O /root/.bashrc $source/.bashrc
+
+# Install Webserver Port 81
+apt-get install nginx php5 libapache2-mod-php5 php5-fpm php5-cli php5-mysql php5-mcrypt libxml-parser-perl -y
+rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-available/default
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old
+curl http://autoscriptnobita.tk/rendum/nginx.conf > /etc/nginx/nginx.conf
+curl http://vpsproject.me/site5/Debian7/vps.conf > /etc/nginx/conf.d/vps.conf
+sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
+useradd -m vps;
+mkdir -p /home/vps/public_html
+echo "<?php phpinfo() ?>" > /home/vps/public_html/info.php
+chown -R www-data:www-data /home/vps/public_html
+chmod -R g+rw /home/vps/public_html
+cd /home/vps/public_html
+wget -O /home/vps/public_html/uptime.php "http://autoscript.kepalatupai.com/uptime.php1"
+wget -O /home/vps/public_html/index.html "http://vpsproject.me/index.html"
+service php5-fpm restart
+service nginx restart
+
+# setting port ssh
+sed -i 's/Port 22/Port 22/g' /etc/ssh/sshd_config
+#sed -i '/Port 22/a Port 80' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 143' /etc/ssh/sshd_config
+sed -i 's/#Banner/Banner/g' /etc/ssh/sshd_config
+service ssh restart
+# update OpenSSH
+wget $source/openssh-7.5p1-openssl-1.1.0-1.patch
+wget $source/openssh-7.5p1.tar.gz
+tar -xf openssh-7.5p1.tar.gz
+cd openssh-7.5p1
+patch -Np1 -i ../openssh-7.5p1-openssl-1.1.0-1.patch && ./configure --prefix=/usr --sysconfdir=/etc/ssh --with-md5-passwords && make && make install
+# configure ssh
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+sed -i 's/Port 22/Port 22/g' /etc/ssh/sshd_config
+sed -i '/Port 22/a Port 2020' /etc/ssh/sshd_config
+
+# install dropbear
+apt-get -y install dropbear
+sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
+sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=442/g' /etc/default/dropbear
+sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 109 -p 110"/g' /etc/default/dropbear
+echo "/bin/false" >> /etc/shells
+service dropbear restart
+#Upgrade to Dropbear 2016
+cd
+apt-get install zlib1g-dev
+wget http://script.hostingtermurah.net/repo/dropbear/dropbear-2016.74.tar.bz2
+bzip2 -cd dropbear-2016.74.tar.bz2 | tar xvf -
+cd dropbear-2016.74
+
+./configure
+make && make install
+mv /usr/sbin/dropbear /usr/sbin/dropbear.old
+ln /usr/local/sbin/dropbear /usr/sbin/dropbear
+cd && rm -rf dropbear-2016.74 && rm -rf dropbear-2016.74.tar.bz2
+service dropbear restart
+
+# install vnstat gui
+cd /home/vps/public_html/
+wget http://script.hostingtermurah.net/repo/vnstat_php_frontend-1.5.1.tar.gz
+tar xf vnstat_php_frontend-1.5.1.tar.gz
+rm vnstat_php_frontend-1.5.1.tar.gz
+mv vnstat_php_frontend-1.5.1 vnstat
+cd vnstat
+sed -i "s/\$iface_list = array('eth0', 'sixxs');/\$iface_list = array('eth0');/g" config.php
+sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
+sed -i 's/Internal/Internet/g' config.php
+sed -i '/SixXS IPv6/d' config.php
+cd
+
+# install fail2ban
+apt-get -y install fail2ban
+service fail2ban restart
+
+# install squid3
+apt-get -y install squid3
+cat > /etc/squid3/squid.conf <<-END
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/32
+http_access allow SSH
+http_access allow manager localhost
+http_access deny manager
+http_access allow localhost
+http_access deny all
+http_port 8080
+http_port 8000
+http_port 80
+http_port 3128
+coredump_dir /var/spool/squid3
+refresh_pattern ^ftp: 1440 20% 10080
+refresh_pattern ^gopher: 1440 0% 1440
+refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
+refresh_pattern . 0 20% 4320
+visible_hostname Proxy.HostingTermurah.net
+END
+sed -i $MYIP2 /etc/squid3/squid.conf;
+service squid3 restart
+
+# install webmin
+cd
+wget "http://vpsproject.me/site5/Debian7/webmin-current.deb"
+dpkg -i --force-all webmin-current.deb;
+apt-get -y -f install;
+sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+rm /root/current.deb
+service webmin restart
+service vnstat restart
+
+#install PPTP
+apt-get -y install pptpd
+cat > /etc/ppp/pptpd-options <<END
+name pptpd
+refuse-pap
+refuse-chap
+refuse-mschap
+require-mschap-v2
+require-mppe-128
+ms-dns 8.8.8.8
+ms-dns 8.8.4.4
+proxyarp
+nodefaultroute
+lock
+nobsdcomp
+END
+
+cat > /etc/pptpd.conf <<END
+option /etc/ppp/pptpd-options
+logwtmp
+localip 10.1.0.1
+remoteip 10.1.0.5-100
+END
+
+cat >> /etc/ppp/ip-up <<END
+ifconfig ppp0 mtu 1400
+END
+mkdir /var/lib/premium-script
+/etc/init.d/pptpd restart
+
+# install mrtg
+apt-get update;apt-get -y install snmpd;
+wget -O /etc/snmp/snmpd.conf $source/snmpd.conf
+wget -O /root/mrtg-mem.sh $source/mrtg-mem.sh
+chmod +x /root/mrtg-mem.sh
+cd /etc/snmp/
+sed -i 's/TRAPDRUN=no/TRAPDRUN=yes/g' /etc/default/snmpd
+service snmpd restart
+snmpwalk -v 1 -c public localhost 1.3.6.1.4.1.2021.10.1.3.1
+mkdir -p /home/vps/public_html/mrtg
+cfgmaker --zero-speed 100000000 --global 'WorkDir: /home/vps/public_html/mrtg' --output /etc/mrtg.cfg public@localhost
+curl $source/mrtg.conf >> /etc/mrtg.cfg
+sed -i 's/WorkDir: \/var\/www\/mrtg/# WorkDir: \/var\/www\/mrtg/g' /etc/mrtg.cfg
+sed -i 's/# Options\[_\]: growright, bits/Options\[_\]: growright/g' /etc/mrtg.cfg
+indexmaker --output=/home/vps/public_html/mrtg/index.html /etc/mrtg.cfg
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+if [ -x /usr/bin/mrtg ] && [ -r /etc/mrtg.cfg ]; then mkdir -p /var/log/mrtg ; env LANG=C /usr/bin/mrtg /etc/mrtg.cfg 2>&1 | tee -a /var/log/mrtg/mrtg.log ; fi
+
+#install OpenVPN
+apt-get -y install openvpn easy-rsa openssl iptables
+cp -r /usr/share/easy-rsa/ /etc/openvpn
+mkdir /etc/openvpn/easy-rsa/keys
+# ganti bits
+sed -i 's|export KEY_COUNTRY="US"|export KEY_COUNTRY="ID"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_PROVINCE="CA"|export KEY_PROVINCE="Jawa Barat"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_CITY="SanFrancisco"|export KEY_CITY="Bandung"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_ORG="Fort-Funston"|export KEY_ORG="HostingTermurah.net"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_EMAIL="me@myhost.mydomain"|export KEY_EMAIL="sales@hostingtermurah.net"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_OU="MyOrganizationalUnit"|export KEY_OU="HostingTermurah.net"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_NAME="EasyRSA"|export KEY_NAME="server"|' /etc/openvpn/easy-rsa/vars
+sed -i 's|export KEY_OU=changeme|export KEY_OU=HostingTermurah|' /etc/openvpn/easy-rsa/vars
+#Buat Diffie-Helman Pem
+openssl dhparam -out /etc/openvpn/dh2048.pem 2048
+# Buat PKI
+cd /etc/openvpn/easy-rsa
+. ./vars
+./clean-all
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" --initca $*
+# buat key server
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" --server server
+# seting KEY CN
+export EASY_RSA="${EASY_RSA:-.}"
+"$EASY_RSA/pkitool" client
+cd
+#cp /etc/openvpn/easy-rsa/keys/{server.crt,server.key,ca.crt} /etc/openvpn
+cp /etc/openvpn/easy-rsa/keys/server.crt /etc/openvpn/server.crt
+cp /etc/openvpn/easy-rsa/keys/server.key /etc/openvpn/server.key
+cp /etc/openvpn/easy-rsa/keys/ca.crt /etc/openvpn/ca.crt
+# Setting Server
+cat > /etc/openvpn/server.conf <<-END
+port 1194
+proto tcp
+dev tun
+ca ca.crt
+cert server.crt
+key server.key
+dh dh2048.pem
+client-cert-not-required
+username-as-common-name
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
+server 192.168.100.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+push "route-method exe"
+push "route-delay 2"
+duplicate-cn
+push "route-method exe"
+push "route-delay 2"
+keepalive 10 120
+comp-lzo
+user nobody
+group nogroup
+persist-key
+persist-tun
+status openvpn-status.log
+log         openvpn.log
+verb 3
+cipher AES-128-CBC
+END
+
+#Create OpenVPN Config
+mkdir -p /home/vps/public_html
+cat > /home/vps/public_html/client.ovpn <<-END
+# OpenVPN Configuration Dibuat Oleh HostingTermurah.net
+# (Official Partner VPS-Murah.net)
+client
+dev tun
+proto tcp
+persist-key
+persist-tun
+dev tun
+pull
+resolv-retry infinite
+nobind
+user nobody
+group nogroup
+comp-lzo
+ns-cert-type server
+verb 3
+mute 2
+mute-replay-warnings
+auth-user-pass
+redirect-gateway def1
+script-security 2
+route 0.0.0.0 0.0.0.0
+route-method exe
+route-delay 2
+remote $MYIP 1194
+cipher AES-128-CBC
+END
+echo '<ca>' >> /home/vps/public_html/client.ovpn
+cat /etc/openvpn/ca.crt >> /home/vps/public_html/client.ovpn
+echo '</ca>' >> /home/vps/public_html/client.ovpn
+cd /home/vps/public_html/
+tar -czf /home/vps/public_html/openvpn.tar.gz client.ovpn
+tar -czf /home/vps/public_html/client.tar.gz client.ovpn
+cd
+
+# Restart openvpn
+/etc/init.d/openvpn restart
+service openvpn start
+service openvpn status
+
+#Setting USW
+apt-get install ufw
+ufw allow ssh
+ufw allow 1194/tcp
+sed -i 's|DEFAULT_INPUT_POLICY="DROP"|DEFAULT_INPUT_POLICY="ACCEPT"|' /etc/default/ufw
+sed -i 's|DEFAULT_FORWARD_POLICY="DROP"|DEFAULT_FORWARD_POLICY="ACCEPT"|' /etc/default/ufw
+cat > /etc/ufw/before.rules <<-END
+# START OPENVPN RULES
+# NAT table rules
+*nat
+:POSTROUTING ACCEPT [0:0]
+# Allow traffic from OpenVPN client to eth0
+-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE
+COMMIT
+# END OPENVPN RULES
+END
+ufw enable
+ufw status
+ufw disable
+
+# set ipv4 forward
+echo 1 > /proc/sys/net/ipv4/ip_forward
+sed -i 's|#net.ipv4.ip_forward=1|net.ipv4.ip_forward=1|' /etc/sysctl.conf
+
+# Install BadVPN
+apt-get -y install cmake make gcc
+wget http://vpsproject.me/site5/Debian7/badvpn-1.999.127.tar.bz2
+tar xf badvpn-1.999.127.tar.bz2
+mkdir badvpn-build
+cd badvpn-build
+cmake ~/badvpn-1.999.127 -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1
+make install
+screen badvpn-udpgw --listen-addr 127.0.0.1:7300 > /dev/null &
+cd
+
+#Setting IPtables
+cat > /etc/iptables.up.rules <<-END
+*filter
+:FORWARD ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A FORWARD -i eth0 -o ppp0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i ppp0 -o eth0 -j ACCEPT
+-A OUTPUT -d 23.66.241.170 -j DROP
+-A OUTPUT -d 23.66.255.37 -j DROP
+-A OUTPUT -d 23.66.255.232 -j DROP
+-A OUTPUT -d 23.66.240.200 -j DROP
+-A OUTPUT -d 128.199.213.5 -j DROP
+-A OUTPUT -d 128.199.149.194 -j DROP
+-A OUTPUT -d 128.199.196.170 -j DROP
+-A OUTPUT -d 103.52.146.66 -j DROP
+-A OUTPUT -d 5.189.172.204 -j DROP
+COMMIT
+
+*nat
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -o eth0 -j MASQUERADE
+-A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
+-A POSTROUTING -s 10.1.0.0/24 -o eth0 -j MASQUERADE
+COMMIT
+END
+sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
+sed -i $MYIP2 /etc/iptables.up.rules;
+iptables-restore < /etc/iptables.up.rules
+# download script
+cd
+wget -O /usr/bin/motd $source/motd
+wget -O /usr/bin/benchmark $source/benchmark.sh
+wget -O /usr/bin/speedtest $source/speedtest_cli.py
+wget -O /usr/bin/ps-mem $source/ps_mem.py
+wget -O /usr/bin/dropmon $source/dropmon.sh
+wget -O /usr/bin/menu $source/menu.sh
+wget -O /usr/bin/user-active-list $source/user-active-list.sh
+wget -O /usr/bin/user-add $source/user-add.sh
+wget -O /usr/bin/user-add-pptp $source/user-add-pptp.sh
+wget -O /usr/bin/user-del $source/user-del.sh
+wget -O /usr/bin/disable-user-expire $source/disable-user-expire.sh
+wget -O /usr/bin/delete-user-expire $source/delete-user-expire.sh
+wget -O /usr/bin/banned-user $source/banned-user.sh
+wget -O /usr/bin/unbanned-user $source/unbanned-user.sh
+wget -O /usr/bin/user-expire-list $source/user-expire-list.sh
+wget -O /usr/bin/user-gen $source/user-gen.sh
+wget -O /usr/bin/userlimit.sh $source/userlimit.sh
+wget -O /usr/bin/userlimitssh.sh $source/userlimitssh.sh
+wget -O /usr/bin/user-list $source/user-list.sh
+wget -O /usr/bin/user-login $source/user-login.sh
+wget -O /usr/bin/user-pass $source/user-pass.sh
+wget -O /usr/bin/user-renew $source/user-renew.sh
+wget -O /usr/bin/clearcache.sh $source/clearcache.sh
+wget -O /usr/bin/bannermenu $source/bannermenu
+cd
+
+#rm -rf /etc/cron.weekly/
+#rm -rf /etc/cron.hourly/
+#rm -rf /etc/cron.monthly/
+rm -rf /etc/cron.daily/
+wget -O /root/passwd $source/passwd.sh
+chmod +x /root/passwd
+echo "01 23 * * * root /root/passwd" > /etc/cron.d/passwd
+
+echo "*/30 * * * * root service dropbear restart" > /etc/cron.d/dropbear
+echo "00 23 * * * root /usr/bin/disable-user-expire" > /etc/cron.d/disable-user-expire
+echo "0 */12 * * * root /sbin/reboot" > /etc/cron.d/reboot
+#echo "00 01 * * * root echo 3 > /proc/sys/vm/drop_caches && swapoff -a && swapon -a" > /etc/cron.d/clearcacheram3swap
+echo "*/30 * * * * root /usr/bin/clearcache.sh" > /etc/cron.d/clearcache1
+
+cd
+chmod +x /usr/bin/motd
+chmod +x /usr/bin/benchmark
+chmod +x /usr/bin/speedtest
+chmod +x /usr/bin/ps-mem
+#chmod +x /usr/bin/autokill
+chmod +x /usr/bin/dropmon
+chmod +x /usr/bin/menu
+chmod +x /usr/bin/user-active-list
+chmod +x /usr/bin/user-add
+chmod +x /usr/bin/user-add-pptp
+chmod +x /usr/bin/user-del
+chmod +x /usr/bin/disable-user-expire
+chmod +x /usr/bin/delete-user-expire
+chmod +x /usr/bin/banned-user
+chmod +x /usr/bin/unbanned-user
+chmod +x /usr/bin/user-expire-list
+chmod +x /usr/bin/user-gen
+chmod +x /usr/bin/userlimit.sh
+chmod +x /usr/bin/userlimitssh.sh
+chmod +x /usr/bin/user-list
+chmod +x /usr/bin/user-login
+chmod +x /usr/bin/user-pass
+chmod +x /usr/bin/user-renew
+chmod +x /usr/bin/clearcache.sh
+chmod +x /usr/bin/bannermenu
+cd
+# install ssl
+apt-get update
+apt-get upgrade
+apt-get install stunnel4
+wget -O /etc/stunnel/stunnel.conf $source/stunnel.conf
+openssl genrsa -out key.pem 2048
+openssl req -new -x509 -key key.pem -out cert.pem -days 1095
+cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+/etc/init.d/stunnel4 restart
+# finalisasi
+apt-get -y autoremove
+chown -R www-data:www-data /home/vps/public_html
+service nginx start
+service php5-fpm start
+service vnstat restart
+service openvpn restart
+service snmpd restart
+service ssh restart
+service dropbear restart
+service fail2ban restart
+service squid3 restart
+service webmin restart
+service pptpd restart
+sysv-rc-conf rc.local on
+
+#clearing history
+history -c
+
+# info
+
+rm -f /root/.bash_history && history -c
+echo "unset HISTFILE" >> /etc/profile
+# info
+clear
+echo "============================================================" | tee -a log-install.txt| lolcat
+echo " FINSIH AND THANK YOU / Please Restart You VPS     "| tee -a log-install.txt| lolcat
+echo "============================================================" | tee -a log-install.txt| lolcat
+echo "Service :" | tee -a log-install.txt | lolcat
+echo "---------" | tee -a log-install.txt | lolcat
+echo "OpenSSH  : 22, 143" | tee -a log-install.txt | lolcat
+echo "Dropbear : 442 ,109,442" | tee -a log-install.txt | lolcat
+echo "  SSL    : 443, 80" | tee -a log-install.txt | lolcat
+echo "Squid3   : 8080 limit to IP $MYIP" | tee -a log-install.txt | lolcat
+#echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.ovpn)" | tee -a log-install.txt | lolcat
+echo "badvpn   : badvpn-udpgw port 7300" | tee -a log-install.txt | lolcat
+echo "PPTP VPN : TCP 1723" | tee -a log-install.txt | lolcat
+echo "nginx    : 81" | tee -a log-install.txt | lolcat
+echo "" | tee -a log-install.txt | lolcat
+echo "Tools :" | tee -a log-install.txt | lolcat
+echo "axel, bmon, htop, iftop, mtr, rkhunter, nethogs: nethogs $ether" | tee -a log-install.txt | lolcat
+echo "Script :" | tee -a log-install.txt | lolcat
+echo "--------" | tee -a log-install.txt | lolcat
+echo "" | tee -a log-install.txt
+echo "Fitur lain :" | tee -a log-install.txt | lolcat
+echo "------------" | tee -a log-install.txt | lolcat
+echo "Webmin         : http://$MYIP:10000/" | tee -a log-install.txt | lolcat
+echo "vnstat         : http://$MYIP:81/vnstat/ [Cek Bandwith]" | tee -a log-install.txt | lolcat
+echo "MRTG           : http://$MYIP:81/mrtg/" | tee -a log-install.txt | lolcat
+echo "Timezone       : Asia/Jakarta " | tee -a log-install.txt | lolcat
+echo "Fail2Ban       : [on]" | tee -a log-install.txt | lolcat
+echo "DDoS Deflate.  : [on]" | tee -a log-install.txt | lolcat
+echo "Block Torrent  : [off]" | tee -a log-install.txt | lolcat
+echo "IPv6           : [off]" | tee -a log-install.txt | lolcat
+echo "Auto Lock User Expire tiap jam 00:00" | tee -a log-install.txt | lolcat
+echo "Auto Reboot tiap jam 00:00 dan jam 12:00" | tee -a log-install.txt | lolcat
+echo "Credit to all developers script, VpsProject" | tee -a log-install.txt | lolcat
+echo "THANK YOU FOR CHOICE US!!" | tee -a log-install.txt | lolcat
+echo "" | tee -a log-install.txt | lolcat
+echo " !!! SILAHKAN REBOOT VPS ANDA !!!" | tee -a log-install.txt | lolcat
+echo "=======================================================" | tee -a log-install.txt | lolcat
