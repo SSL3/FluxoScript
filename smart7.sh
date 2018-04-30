@@ -103,14 +103,15 @@ echo "screenfetch-dev" >> .profile
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/Clrkz/VPSAutoScrptz/master/nginx.conf
-mkdir -p /home/fns/public_html
-echo "<pre>Default Webpage</pre><br/><pre>Auto Installer by aditya</pre>" > /home/fns/public_html/index.html
-echo "<?php phpinfo(); ?>" > /home/fns/public_html/info.php
-wget -q -O /etc/nginx/conf.d/vps.conf https://raw.githubusercontent.com/Clrkz/VPSAutoScrptz/master/vps.conf
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/SSL3/FluxoScript/master/nginx.conf"
+mkdir -p /home/vps/public_html
+echo "<pre>Modified by MuLuu09 atau (+601131731782)</pre>" > /home/vps/public_html/index.html
+echo "<?php phpinfo(); ?>" > /home/vps/public_html/info.php
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/SSL3/FluxoScript/master/vps.conf"
 sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 service php5-fpm restart
 service nginx restart
+
 
 # install openvpn
 cd
@@ -249,13 +250,14 @@ service squid3 restart
 
 # install webmin
 cd
-apt-get -y install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
-wget -O webmin-current.deb "http://www.webmin.com/download/deb/webmin-current.deb"
-dpkg -i --force-all webmin-current.deb;
+wget "http://script.hostingtermurah.net/repo/webmin_1.801_all.deb"
+dpkg --install webmin_1.801_all.deb;
 apt-get -y -f install;
-rm /root/webmin-current.deb
+sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+rm /root/webmin_1.801_all.deb
 service webmin restart
 service vnstat restart
+apt-get -y --force-yes -f install libxml-parser-perl
 
 # install dos2unix
 apt-get install dos2unix
