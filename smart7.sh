@@ -103,11 +103,11 @@ echo "screenfetch-dev" >> .profile
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/faismart/scriptntap/master/null/nginx.conf
+wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/Clrkz/VPSAutoScrptz/master/nginx.conf
 mkdir -p /home/fns/public_html
 echo "<pre>Default Webpage</pre><br/><pre>Auto Installer by aditya</pre>" > /home/fns/public_html/index.html
 echo "<?php phpinfo(); ?>" > /home/fns/public_html/info.php
-wget -q -O /etc/nginx/conf.d/vps.conf https://raw.githubusercontent.com/faismart/scriptntap/master/null/vps.conf
+wget -q -O /etc/nginx/conf.d/vps.conf https://raw.githubusercontent.com/Clrkz/VPSAutoScrptz/master/vps.conf
 sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 service php5-fpm restart
 service nginx restart
