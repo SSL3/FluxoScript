@@ -178,14 +178,48 @@ tar xf vnstat_php_frontend-1.5.1.tar.gz
 rm vnstat_php_frontend-1.5.1.tar.gz
 mv vnstat_php_frontend-1.5.1 vnstat
 cd vnstat
-sed -i "s/\$iface_list = array('eth0', 'sixxs');/\$iface_list = array('eth0');/g" config.php
-sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
-sed -i 's/Internal/Internet/g' config.php
-sed -i '/SixXS IPv6/d' config.php
-sed -i "s/\$locale = 'en_US.UTF-8';/\$locale = 'en_US.UTF+8';/g" config.php
-cd
-clear
-
+if [[ `ifconfig -a | grep "venet0"` ]]
+then
+cekvirt='OpenVZ'
+elif [[ `ifconfig -a | grep "venet0:0"` ]]
+then
+cekvirt='OpenVZ'
+elif [[ `ifconfig -a | grep "venet0:0-00"` ]]
+then
+cekvirt='OpenVZ'
+elif [[ `ifconfig -a | grep "venet0-00"` ]]
+then
+cekvirt='OpenVZ'
+elif [[ `ifconfig -a | grep "eth0"` ]]
+then
+cekvirt='KVM'
+elif [[ `ifconfig -a | grep "eth0:0"` ]]
+then
+cekvirt='KVM'
+elif [[ `ifconfig -a | grep "eth0:0-00"` ]]
+then
+cekvirt='KVM'
+elif [[ `ifconfig -a | grep "eth0-00"` ]]
+then
+cekvirt='KVM'
+fi
+if [ $cekvirt = 'KVM' ]; then
+	sed -i 's/eth0/eth0/g' config.php
+	sed -i "s/\$iface_list = array('eth0', 'sixxs');/\$iface_list = array('eth0');/g" config.php
+	sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
+	sed -i 's/Internal/Internet/g' config.php
+	sed -i "s/\$locale = 'en_US.UTF-8';/\$locale = 'en_US.UTF+8';/g" config.php
+	cd
+elif [ $cekvirt = 'OpenVZ' ]; then
+	sed -i 's/eth0/venet0/g' config.php
+	sed -i "s/\$iface_list = array('venet0', 'sixxs');/\$iface_list = array('venet0');/g" config.php
+	sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
+	sed -i 's/Internal/Internet/g' config.php
+	sed -i '/SixXS IPv6/d' config.php
+	cd
+else
+	cd
+fi
 
 # Install BadVPN
 apt-get -y install cmake make gcc
