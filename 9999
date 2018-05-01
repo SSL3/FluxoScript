@@ -221,16 +221,10 @@ else
 	cd
 fi
 
-# Install BadVPN
-apt-get -y install cmake make gcc
-wget http://borneovpshosting.com/autoscript/Debian9/badvpn-1.999.127.tar.bz2
-tar xf badvpn-1.999.127.tar.bz2
-mkdir badvpn-build
-cd badvpn-build
-cmake ~/badvpn-1.999.127 -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1
-make install
-screen badvpn-udpgw --listen-addr 127.0.0.1:7300 > /dev/null &
-cd
+# install badvpn
+wget https://raw.githubusercontent.com/RicKbrL/VpsConf/master/badvpn.sh
+chmod +x badvpn.sh
+./badvpn.sh
 
 # download script
 cd
