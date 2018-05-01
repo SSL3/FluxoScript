@@ -185,16 +185,25 @@ echo "/usr/sbin/nologin" >> /etc/shells
 service ssh restart
 service dropbear restart
 
-# upgrade dropbear 2017
-apt-get install zlib1g-dev
-wget -q https://matt.ucc.asn.au/dropbear/releases/dropbear-2017.75.tar.bz2
-bzip2 -cd dropbear-2017.75.tar.bz2 | tar xvf -
-cd dropbear-2017.75
-./configure
-make && make install
-mv /usr/sbin/dropbear /usr/sbin/dropbear1
-ln /usr/local/sbin/dropbear /usr/sbin/dropbear
-service dropbear restart
+# upgrade dropbear-2018.76
+cd
+apt-get install -y gcc zlib1g-dev build-essential
+wget https://matt.ucc.asn.au/dropbear/dropbear-2018.76.tar.bz2
+tar xjvf dropbear-2018.76.tar.bz2
+cd dropbear-2018.76
+dpkg-buildpackage
+apt-get purge --remove dropbear
+apt-get remove --purge dropbear
+apt-get autoremove
+apt-get autoclean
+rm -rf /etc/dropbear
+cd .. 
+ls
+dpkg -i dropbear_2018.76-0.1_i386.deb
+
+# rebuild konfigurasi dropbear
+wget https://raw.githubusercontent.com/lordey/konfigurasi-dropbear/master/dropbear-conf.sh && chmod +x dropbear-conf.sh && ./dropbear-conf.sh
+
 
 
 # install vnstat gui
